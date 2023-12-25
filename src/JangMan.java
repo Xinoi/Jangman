@@ -3,13 +3,11 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.management.RuntimeErrorException;
-
 import java.io.IOException;
 
 public class JangMan {
 
-    private final int MAX_WRONG_GUESSES = 10;
+    private final int MAX_WRONG_GUESSES = 7;
     private String used_characters = "";
     private int wrong_guesses = 0;
     private String[] word_list = {"donau", "typ", "lokomotive", "atmosphäre", "rythmus", "gymnastik"};
@@ -96,12 +94,18 @@ public class JangMan {
             System.out.println("│ Word: " + toString());
             System.out.print("│ Please input a guess character (only 1): ");
             
-            // Proper error handling later
-            char guess = sc.nextLine().charAt(0);
-            makeGuess(guess);
+            String guess = sc.nextLine();
+            if(guess.length() > 1) {
+                clearConsole();
+                System.out.println("| Please input only one character! |");
+                pause(2000);
+                continue;
+            }
+
+            makeGuess(guess.charAt(0));
             System.out.println("│ Used characters: " + used_characters);
             System.out.println("└───────────────────────────────────────────┘");
-            pause(1000); // Pause for 2 seconds before clearing the console
+            pause(2000);
             clearConsole();
         }
 
@@ -110,6 +114,8 @@ public class JangMan {
         } else {
             System.out.println("Welp, maybe next time.");
         }
+
+        sc.close();
     }
 
     private void clearConsole() {
