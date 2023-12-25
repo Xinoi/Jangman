@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class JangMan {
 
     private final int MAX_WRONG_GUESSES = 10;
-    private String used_characters;
+    private String used_characters = "";
     private int wrong_guesses = 0;
     private String[] word_list = {"donau", "typ", "lokomotive", "atmosphäre", "rythmus", "gymnastik"};
     private String current_word;
@@ -45,13 +45,17 @@ public class JangMan {
     }
 
     public String toString() {
-        //to do
-        return null;
+        return current_word.chars()
+        .map(c -> {
+            if(!used_characters.contains(String.valueOf(c))) return '_';
+            else return c;
+        })
+        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+        .toString();
     }
 
     public boolean isWon() {
-        //to do
-        return false;
+        return toString().equals(current_word);
     }
 
     public boolean isGameOver() {
