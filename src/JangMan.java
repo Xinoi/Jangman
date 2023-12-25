@@ -5,7 +5,7 @@ public class JangMan {
 
     private final int MAX_WRONG_GUESSES = 10;
     private String used_characters;
-    private int wrong_guesses;
+    private int wrong_guesses = 0;
     private String[] word_list = {"donau", "typ", "lokomotive", "atmosphäre", "rythmus", "gymnastik"};
     private String current_word;
 
@@ -37,13 +37,11 @@ public class JangMan {
     }
 
     public int wrongTriesLeft() {
-        //to do
-        return 0;
+        return MAX_WRONG_GUESSES - wrong_guesses;
     }
 
     public String solution() {
-        //to do
-        return null;
+        return current_word;
     }
 
     public String toString() {
@@ -57,7 +55,7 @@ public class JangMan {
     }
 
     public boolean isGameOver() {
-        //to do
-        return false;
+        if (wrongTriesLeft() == 0) return true;
+        else return false;
     }
 }
