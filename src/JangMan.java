@@ -1,5 +1,11 @@
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.management.RuntimeErrorException;
+
+import java.io.IOException;
 
 public class JangMan {
 
@@ -23,10 +29,12 @@ public class JangMan {
 
     public boolean makeGuess(char guess) {
         String Sguess = String.valueOf(guess).trim().toLowerCase();
-        if(!current_word.contains(Sguess) || used_characters.contains(Sguess)) {
+        if(current_word.contains(Sguess) && !used_characters.contains(Sguess)) {
             used_characters += Sguess;
+            System.out.println("| correct!");
             return true;
         }else {
+            System.out.println("| wrong!");
             wrong_guesses++;
             return false;
         }
@@ -44,22 +52,85 @@ public class JangMan {
         return current_word;
     }
 
+    public String status() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < MAX_WRONG_GUESSES; i++) 
+            if(i < wrong_guesses) sb.append('X');
+            else sb.append('0');
+
+        return sb.toString();
+    }
+
     public String toString() {
-        return current_word.chars()
-        .map(c -> {
-            if(!used_characters.contains(String.valueOf(c))) return '_';
-            else return c;
-        })
-        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-        .toString();
+        return IntStream.range(0, current_word.length())
+                    .mapToObj(i -> {
+                        char c = current_word.toCharArray()[i];
+                        if (!used_characters.contains(String.valueOf(c))) {
+                            return '_';
+                        } else {
+                            return c;
+                        }
+                    })
+                    .map(Object::toString)
+                    .collect(Collectors.joining());
     }
 
     public boolean isWon() {
-        return toString().equals(current_word);
+        return current_word.equals(toString());
     }
 
     public boolean isGameOver() {
-        if (wrongTriesLeft() == 0) return true;
-        else return false;
+        return wrongTriesLeft() == 0;
+    }
+
+    public void run() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Welcome to my little hangman game! You know the rules. Let's begin!");
+
+        while (!isGameOver() && !isWon()) {
+            clearConsole();
+            System.out.println("┌───────────────────────────────────────────┐");
+            System.out.println("│               Hangman Game                │");
+            System.out.println("├───────────────────────────────────────────┤");
+            System.out.println("│ Tries left: " + status());
+            System.out.println("│ Word: " + toString());
+            System.out.print("│ Please input a guess character (only 1): ");
+            
+            // Proper error handling later
+            char guess = sc.nextLine().charAt(0);
+            makeGuess(guess);
+            System.out.println("│ Used characters: " + used_characters);
+            System.out.println("└───────────────────────────────────────────┘");
+            pause(1000); // Pause for 2 seconds before clearing the console
+            clearConsole();
+        }
+
+        if (isWon()) {
+            System.out.println("Congratulations, you won!");
+        } else {
+            System.out.println("Welp, maybe next time.");
+        }
+    }
+
+    private void clearConsole() {
+        //definetly not copied :)
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Error while clearing console.", e);
+        }
+    }
+
+    private void pause(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Failed to pause");
+        }
     }
 }
