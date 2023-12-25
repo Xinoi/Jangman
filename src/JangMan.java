@@ -22,8 +22,14 @@ public class JangMan {
     }
 
     public boolean makeGuess(char guess) {
-        //to do
-        return false;
+        String Sguess = String.valueOf(guess).trim().toLowerCase();
+        if(!current_word.contains(Sguess) || used_characters.contains(Sguess)) {
+            used_characters += Sguess;
+            return true;
+        }else {
+            wrong_guesses++;
+            return false;
+        }
     }
 
     public String getCurrentWord() {
