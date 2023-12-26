@@ -102,7 +102,14 @@ public class JangMan {
                 continue;
             }
 
-            makeGuess(guess.charAt(0));
+            try {
+                makeGuess(guess.charAt(0));
+            } catch (Exception e) {
+                clearConsole();
+                System.out.println("| Please input a character! |");
+                pause(2000);
+                continue;
+            }
             System.out.println("│ Used characters: " + used_characters);
             System.out.println("└───────────────────────────────────────────┘");
             pause(2000);
